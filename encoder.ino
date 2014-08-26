@@ -15,7 +15,7 @@
 
 /*
  *	author:	lisper <lisper.li@dfrobot.com> 2014-07-24
- *	example for encoder v3
+ *	example for encoder v4
  */
 
 #define PinA 2	//int0
@@ -26,46 +26,72 @@ volatile int32_t count1 = 0;
 
 volatile int enState = 0;
 
+volatile int stateA,stateB;
+volatile uint32_t delay_time;
+volatile boolean direction = 0;
+
+
 //
 void setup() {
-	Serial.begin(9600);
+  Serial.begin(9600);
 
-	pinMode(PinA,INPUT_PULLUP);
-	pinMode(PinB,INPUT_PULLUP);
+  pinMode(PinA,INPUT_PULLUP);
+  pinMode(PinB,INPUT_PULLUP);
 
-	attachInterrupt(0, funcA, CHANGE); 
-	attachInterrupt(1, funcB, CHANGE);
+  attachInterrupt(0, funcA, CHANGE); 
+  attachInterrupt(1, funcB, CHANGE);
 }
 
 //
 void loop() {
-	//while count changed print it
-	while (count1 != count) {
-		count1 = count;
-		Serial.println(count*2.25);
-	}
+  //while count changed print it
+  while (count1 != count) {
+    count1 = count;
+    Serial.print (count * 0.5625);  // *2.25/4
+    Serial.print (" ");
+    Serial.print (direction);
+    Serial.print (" ");
+    Serial.println (delay_time);
+  }
 }
 
 //int0
 void funcA () {
-	int state = digitalRead (PinA);
-	if (state) {
-		if (enState == 0) 
-			count++, enState = 2;
-	}
-	else if (enState == 1)
-		enState = 0;
+  static uint32_t start_time;
+  stateA = digitalRead (PinA);
+  if (stateA && stateB) {
+    count--;
+    direction = 0;
+    uint32_t now_time = millis ();
+    delay_time = now_time - start_time;
+    start_time = now_time;    
+  } else if (stateA && !stateB) {
+    count++;
+  } else if (!stateA && stateB) {
+    count++;
+  } else if (!stateA && !stateB) {
+    count--;
+  }
 }
 
 //int1
 void funcB () {
-	int state = digitalRead (PinB);
-	if (state) {
-		if (enState == 0)  
-			count--, enState= 1;
-	} 
-	else if (enState == 2)
-		enState = 0;
+  static uint32_t start_time;
+  stateB = digitalRead (PinB);
+  if (stateA && stateB) {
+    count++;
+    direction = 1;
+    uint32_t now_time = millis ();
+    delay_time = now_time - start_time;
+    start_time = now_time;
+  } else if (stateA && !stateB) {
+    count--;
+  } else if (!stateA && stateB) {
+    count--;
+  } else if (!stateA && !stateB) {
+    count++;
+  }
 }
+
 
 
