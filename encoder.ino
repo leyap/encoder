@@ -58,7 +58,7 @@ void loop() {
 
 //int0
 void funcA () {
-  uint32_t now_time = millis ();
+  uint32_t now_time = micros ();
 
   delay_time = now_time - start_time;
   if (ischange)
@@ -82,7 +82,7 @@ void funcA () {
     else {
       ischange = 1;
       old_dir = direction = 1;
-      
+
     } 
   }
   else if (!stateA && stateB) {
@@ -108,7 +108,7 @@ void funcA () {
 
 //int1
 void funcB () {
-  uint32_t now_time = millis ();
+  uint32_t now_time = micros ();
   delay_time = now_time - start_time;
   start_time = now_time;
   if (ischange)
@@ -152,6 +152,7 @@ void funcB () {
     }
   }
 }
+
 
 
 
