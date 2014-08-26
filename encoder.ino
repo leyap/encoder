@@ -57,41 +57,55 @@ void loop() {
 
 //int0
 void funcA () {
-  static uint32_t start_time;
+  static uint32_t start_time = 0;
+  uint32_t now_time = millis ();
+  delay_time = now_time - start_time;
+  start_time = now_time;  
+
   stateA = digitalRead (PinA);
   if (stateA && stateB) {
     count--;
     direction = 0;
-    uint32_t now_time = millis ();
-    delay_time = now_time - start_time;
-    start_time = now_time;    
-  } else if (stateA && !stateB) {
+
+  } 
+  else if (stateA && !stateB) {
     count++;
-  } else if (!stateA && stateB) {
+    direction = 1;
+  } 
+  else if (!stateA && stateB) {
     count++;
-  } else if (!stateA && !stateB) {
+    direction = 1;
+  } 
+  else if (!stateA && !stateB) {
     count--;
+    direction = 0;
   }
 }
 
 //int1
 void funcB () {
   static uint32_t start_time;
+  uint32_t now_time = millis ();
+  delay_time = now_time - start_time;
+  start_time = now_time;
+
   stateB = digitalRead (PinB);
   if (stateA && stateB) {
     count++;
     direction = 1;
-    uint32_t now_time = millis ();
-    delay_time = now_time - start_time;
-    start_time = now_time;
-  } else if (stateA && !stateB) {
+  } 
+  else if (stateA && !stateB) {
     count--;
-  } else if (!stateA && stateB) {
+    direction = 0;
+  } 
+  else if (!stateA && stateB) {
     count--;
-  } else if (!stateA && !stateB) {
+    direction = 0;
+  } 
+  else if (!stateA && !stateB) {
     count++;
+    direction = 1;
   }
 }
-
 
 
